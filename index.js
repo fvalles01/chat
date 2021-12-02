@@ -8,15 +8,22 @@ const passport = require("passport");
 const { loginCheck } = require("./auth/passport");
 loginCheck(passport);
 
+
+//socketIO
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+
 // Mongo DB conncetion
 const database = process.env.MONGOLAB_URI;
+console.log(database);
 mongoose
     .connect(database, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(() => console.log("DB CONNEXION"))
     .catch((err) => console.log(err));
 
 app.set("view engine", "ejs");
-
+app.use(express.static('public'));
 //BodyParsing
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
@@ -31,6 +38,12 @@ app.use(passport.session());
 //Routes
 app.use("/", require("./routes/login"));
 
+io.on('connection', (socket) => {
+    socket.on('chat message', msg => {
+        io.emit('chat message', msg);
+    });
+});
+
 const PORT = process.env.PORT || 4111;
 
-app.listen(PORT, console.log("Server has started at port " + PORT));
+http.listen(PORT, console.log("Server has started at port " + PORT));

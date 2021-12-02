@@ -66,6 +66,10 @@ const loginView = (req, res) => {
 //Logging in Function
 
 const loginUser = (req, res) => {
+
+
+
+
     const { email, password } = req.body;
 
     //Required
@@ -81,7 +85,11 @@ const loginUser = (req, res) => {
             failureRedirect: "/login",
             failureFlash: true,
         })(req, res);
+
+
     }
+
+
 };
 
 
